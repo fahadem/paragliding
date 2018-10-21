@@ -84,15 +84,13 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			}
 			
-
-			json.NewEncoder(w).Encode(igc.Url)
 			Idstr := "id"
 			strValue := fmt.Sprintf("%d", idCount)
 			newId := Idstr + strValue
 			ids = append(ids, newId)
 			idCount += 1
 			db.add(igc, newId)
-			json.NewEncoder(w).Encode(newId)
+			json.NewEncoder(w).Encode(igc.Url+newId)
 		}
 	case "GET":
 		{
@@ -107,12 +105,10 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if parts[4] == "" {
 				//deal with the array
-				json.NewEncoder(w).Encode("Array")
 				json.NewEncoder(w).Encode(ids)
 
 			}
 			if parts[4] != "" {
-				json.NewEncoder(w).Encode("Info about id")
 				//deal with the id
 				var igcWanted igcFile
 				rgx, _ := regexp.Compile("^id[0-9]*")
