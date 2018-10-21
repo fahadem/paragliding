@@ -27,7 +27,7 @@ type Api struct {
 
 }
 type igcFile struct {
-	Url string `json:"url,omitempty"`
+	Url string //`json:"url,omitempty"`
 }
 
 type igcDB struct {
@@ -156,7 +156,7 @@ func main() {
 	idCount = 0
 	ids = nil
 	port := os.Getenv("PORT")
-	http.HandleFunc("/igcinfo/api", getApi)
-	http.HandleFunc("/igcinfo/api/igc/", igcHandler)
+	http.HandleFunc("/paragliding/api", getApi)
+	http.HandleFunc("/paragliding/api/igc/", igcHandler)
 	http.ListenAndServe(":"+port, nil)
 }
