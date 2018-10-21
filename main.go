@@ -96,7 +96,7 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 		{
 			//GET case
-			http.Header.Add(w.Header(), "content-type", "application/json")
+			//http.Header.Add(w.Header(), "content-type", "application/json")
 			parts := strings.Split(r.URL.Path, "/")
 			
 			if len(parts) < 4 || len(parts) > 5 {
