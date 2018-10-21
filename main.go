@@ -84,7 +84,7 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			}
 			
-			fmt.Fprintf(w, "URL : %s\n", igc.Url)
+			//fmt.Fprintf(w, "URL : %s\n", igc.Url)
 			Idstr := "id"
 			strValue := fmt.Sprintf("%d", idCount)
 			newId := Idstr + strValue
@@ -106,7 +106,7 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if parts[4] == "" {
 				//deal with the array
-				fmt.Fprintln(w, "Display the array")
+				//fmt.Fprintln(w, "Display the array")
 				json.NewEncoder(w).Encode(ids)
 
 			}
@@ -136,16 +136,6 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 				if rgx.MatchString(id) == false {
 					fmt.Fprintln(w, "Use format id0 or id21 for exemple")
 				}
-			}
-			if parts[5] == "" {
-
-				igcT := igcTrack{}
-				igcT.Glider = track.GliderType
-				igcT.Glider_id = track.GliderID
-				igcT.Pilot = track.Pilot
-				igcT.Track_length = track.Task.Distance()
-				igcT.H_date = track.Date.String()
-				json.NewEncoder(w).Encode(igcT)
 			}
 
 		}
