@@ -139,7 +139,13 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if parts[5] == "" {
 
-				fmt.Fprintln(w,igcT)
+				igcT := igcTrack{}
+				igcT.Glider = track.GliderType
+				igcT.Glider_id = track.GliderID
+				igcT.Pilot = track.Pilot
+				igcT.Track_length = track.Task.Distance()
+				igcT.H_date = track.Date.String()
+				json.NewEncoder(w).Encode(igcT)
 			}
 
 		}
