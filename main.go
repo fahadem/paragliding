@@ -107,7 +107,7 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 			if parts[4] == "" {
 				//deal with the array
 				fmt.Fprintln(w, "Display the array")
-				//json.NewEncoder(w).Encode(ids)
+				json.NewEncoder(w).Encode(ids)
 
 			}
 			if parts[4] != "" {
@@ -157,6 +157,6 @@ func main() {
 	ids = nil
 	port := os.Getenv("PORT")
 	http.HandleFunc("/paragliding/api", getApi)
-	http.HandleFunc("/paragliding/api/igc/", igcHandler)
+	http.HandleFunc("/paragliding/api/igc", igcHandler)
 	http.ListenAndServe(":"+port, nil)
 }
