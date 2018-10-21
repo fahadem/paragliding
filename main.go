@@ -99,23 +99,23 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 			http.Header.Add(w.Header(), "content-type", "application/json")
 			parts := strings.Split(r.URL.Path, "/")
 			
-			if len(parts) < 5 || len(parts) > 6 {
+			if len(parts) < 4 || len(parts) > 5 {
 				//deal with errors
 				fmt.Fprintln(w, "404")
 				return
 			}
-			if parts[4] == "" {
+			if parts[3] == "" {
 				//deal with the array
 				fmt.Fprintln(w, "Display the array")
 				json.NewEncoder(w).Encode(ids)
 
 			}
-			if parts[4] != "" {
+			if parts[3] != "" {
 				fmt.Fprintln(w, "Information about the id")
 				//deal with the id
 				var igcWanted igcFile
 				rgx, _ := regexp.Compile("^id[0-9]*")
-				id := parts[4]
+				id := parts[3]
 				if rgx.MatchString(id) == true {
 					igcWanted = db.Get(id)
 
