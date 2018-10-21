@@ -27,7 +27,7 @@ type Api struct {
 
 }
 type igcFile struct {
-	Url string //`json:"url,omitempty"`
+	Url string `json:"url,omitempty"`
 }
 
 type igcDB struct {
@@ -107,7 +107,7 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 			if parts[4] == "" {
 				//deal with the array
 				fmt.Fprintln(w, "Display the array")
-				json.NewEncoder(w).Encode(ids)
+				//json.NewEncoder(w).Encode(ids)
 
 			}
 			if parts[4] != "" {
