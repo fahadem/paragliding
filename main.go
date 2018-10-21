@@ -84,7 +84,8 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			}
 			
-			//fmt.Fprintf(w, "URL : %s\n", igc.Url)
+
+			json.NewEncoder(w).Encode(igc.Url)
 			Idstr := "id"
 			strValue := fmt.Sprintf("%d", idCount)
 			newId := Idstr + strValue
@@ -101,17 +102,17 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 			
 			if len(parts) < 5 || len(parts) > 6 {
 				//deal with errors
-				fmt.Fprintln(w, "404")
+				json.NewEncoder(w).Encode("404")
 				return
 			}
 			if parts[4] == "" {
 				//deal with the array
-				//fmt.Fprintln(w, "Display the array")
+				json.NewEncoder(w).Encode("Array")
 				json.NewEncoder(w).Encode(ids)
 
 			}
 			if parts[4] != "" {
-				fmt.Fprintln(w, "Information about the id")
+				json.NewEncoder(w).Encode("Info about id")
 				//deal with the id
 				var igcWanted igcFile
 				rgx, _ := regexp.Compile("^id[0-9]*")
