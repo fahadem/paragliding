@@ -83,14 +83,15 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			}
-			
+			igc.Url = "http://skypolaris.org/wp-content/uploads/IGS%20Files/Madrid%20to%20Jerez.igc"
+			json.NewEncoder(w).Encode(igc.Url)
 			Idstr := "id"
 			strValue := fmt.Sprintf("%d", idCount)
 			newId := Idstr + strValue
 			ids = append(ids, newId)
 			idCount += 1
 			db.add(igc, newId)
-			json.NewEncoder(w).Encode(igc.Url+newId)
+			json.NewEncoder(w).Encode(newId)
 		}
 	case "GET":
 		{
