@@ -69,7 +69,7 @@ func getApi(w http.ResponseWriter, r *http.Request) {
 }
 
 func igcHandler(w http.ResponseWriter, r *http.Request) {
-	http.Header.Add(w.Header(), "content-type", "application/json")
+
 	switch r.Method {
 	case "POST":
 		{
@@ -96,7 +96,7 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 		{
 			//GET case
-
+			http.Header.Add(w.Header(), "content-type", "application/json")
 			parts := strings.Split(r.URL.Path, "/")
 			
 			if len(parts) < 5 || len(parts) > 6 {
@@ -136,6 +136,10 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 				if rgx.MatchString(id) == false {
 					fmt.Fprintln(w, "Use format id0 or id21 for exemple")
 				}
+			}
+			if parts[5] == "" {
+
+				fmt.Fprintln(w,igcT)
 			}
 
 		}
