@@ -128,7 +128,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 
 					//encode the File
 					url := Wanted.Url
-					track, err := file.ParseLocation(url)
+					track, err := igc.ParseLocation(url)
 					if err != nil {
 						//fmt.Errorf("Problem reading the track", err)
 					}
