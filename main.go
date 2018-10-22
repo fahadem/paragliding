@@ -99,7 +99,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			newId := Idstr + strValue
 			ids = append(ids, newId)
 			idCount += 1
-			db.add(igc, newId)
+			db.add(file, newId)
 			json.NewEncoder(w).Encode(newId)
 		}
 	case "GET":
