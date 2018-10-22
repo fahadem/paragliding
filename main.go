@@ -21,40 +21,48 @@ type Track struct {
 	Track_src_url string
 }
 
+type Ticker struct {
+	T_latest string //"t_latest": <latest added timestamp>,
+	T_start string //"t_start": <the first timestamp of the added track>, this will be the oldest track recorded
+	T_stop string //"t_stop": <the last timestamp of the added track>, this might equal to t_latest if there are no more tracks left
+	Tracks []Track{} //"tracks": [<id1>, <id2>, ...]
+	Processing time.Time //"processing": <time in ms of how long it took to process the request>
+}
+
 type Api struct {
 	Uptime time.Time `json:"uptime,omitempty"`
 	Info string `json:"info,omitempty"`
 	Version string `json:"version,omitempty"`
 
 }
-type igcFile struct {
+type File struct {
 	Url string `json:"url,omitempty"`
 }
 
 type igcDB struct {
-	igcs map[string]igcFile
+	igcs map[string]File
 }
 
-func (db *igcDB) add(igc igcFile, id string) {
-	for _, file := range db.igcs {
-		if igc == file {
+func (db *igcDB) add(file File, id string) {
+	for _, f := range db.igcs {
+		if file == f {
 			return
 		}
 	}
-	db.igcs[id] = igc
+	db.igcs[id] = file
 }
 
 func (db igcDB) Count() int {
 	return len(db.igcs)
 }
 
-func (db igcDB) Get(idWanted string) igcFile {
+func (db igcDB) Get(idWanted string) File {
 	for id, file := range db.igcs {
 		if idWanted == id {
 			return file
 		}
 	}
-	return igcFile{}
+	return File{}
 }
 
 func getApi(w http.ResponseWriter, r *http.Request) {
@@ -79,13 +87,13 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "no JSON body", http.StatusBadRequest)
 				return
 			}
-			var igc igcFile
-			err := json.NewDecoder(r.Body).Decode(&igc)
+			var file File
+			err := json.NewDecoder(r.Body).Decode(&file)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			}
-			igc.Url = "http://skypolaris.org/wp-content/uploads/IGS%20Files/Madrid%20to%20Jerez.igc"
-			json.NewEncoder(w).Encode(igc.Url)
+
+			//json.NewEncoder(w).Encode(url)
 			Idstr := "id"
 			strValue := fmt.Sprintf("%d", idCount)
 			newId := Idstr + strValue
@@ -112,15 +120,15 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if parts[4] != "" {
 				//deal with the id
-				var igcWanted igcFile
+				var Wanted File
 				rgx, _ := regexp.Compile("^id[0-9]*")
 				id := parts[4]
 				if rgx.MatchString(id) == true {
 					igcWanted = db.Get(id)
 
-					//then encode the igcFile
-					url := igcWanted.Url
-					track, err := igc.ParseLocation(url)
+					//encode the File
+					url := Wanted.Url
+					track, err := file.ParseLocation(url)
 					if err != nil {
 						//fmt.Errorf("Problem reading the track", err)
 					}
@@ -148,7 +156,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func tickerHandler(w http.ResponseWriter, r *http.Request) {
+func latestTicker(w http.ResponseWriter, r *http.Request) {
 	//http.Header.Add(w.Header(), "content-type", "application/json")
 	//parts := strings.Split(r.URL.Path, "/")
 	json.NewEncoder(w).Encode(time.Since(latestT).String())
@@ -167,6 +175,6 @@ func main() {
 	port := os.Getenv("PORT")
 	http.HandleFunc("/paragliding/api", getApi)
 	http.HandleFunc("/paragliding/api/track/", trackHandler)
-	http.HandleFunc("/paragliding/api/ticker/latest", tickerHandler)
+	http.HandleFunc("/paragliding/api/ticker/latest", latestTicker)
 	http.ListenAndServe(":"+port, nil)
 }
