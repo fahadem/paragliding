@@ -12,12 +12,13 @@ import (
 )
 
 
-type igcTrack struct {
+type Track struct {
 	H_date       string  //"H_date": <date from File Header, H-record>,
 	Pilot        string  //"pilot": <pilot>,
 	Glider       string  //"glider": <glider>,
 	Glider_id    string  //"glider_id": <glider_id>,
 	Track_length float64 //"track_length": <calculated total track length>
+	Track_src_url string
 }
 
 type Api struct {
@@ -68,7 +69,7 @@ func getApi(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func igcHandler(w http.ResponseWriter, r *http.Request) {
+func trackHandler(w http.ResponseWriter, r *http.Request) {
 	http.Header.Add(w.Header(), "content-type", "application/json")
 	switch r.Method {
 	case "POST":
@@ -91,7 +92,7 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 			ids = append(ids, newId)
 			idCount += 1
 			db.add(igc, newId)
-			//json.NewEncoder(w).Encode(newId)
+			json.NewEncoder(w).Encode(newId)
 		}
 	case "GET":
 		{
@@ -123,13 +124,16 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 					if err != nil {
 						//fmt.Errorf("Problem reading the track", err)
 					}
-					igcT := igcTrack{}
-					igcT.Glider = track.GliderType
-					igcT.Glider_id = track.GliderID
-					igcT.Pilot = track.Pilot
-					igcT.Track_length = track.Task.Distance()
-					igcT.H_date = track.Date.String()
-					json.NewEncoder(w).Encode(igcT)
+					T := Track{}
+					T.Glider = track.GliderType
+					T.Glider_id = track.GliderID
+					T.Pilot = track.Pilot
+					T.Track_length = track.Task.Distance()
+					T.H_date = track.Date.String()
+					latestT = time.Now()
+					json.NewEncoder(w).Encode(T)
+
+
 				}
 				if rgx.MatchString(id) == false {
 					fmt.Fprintln(w, "Use format id0 or id21 for exemple")
@@ -144,9 +148,16 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func tickerHandler(w http.ResponseWriter, r *http.Request) {
+	//http.Header.Add(w.Header(), "content-type", "application/json")
+	//parts := strings.Split(r.URL.Path, "/")
+	json.NewEncoder(w).Encode(time.Since(latestT))
+}
+
 var db igcDB
 var ids []string
 var idCount int
+var latestT time.Time
 
 func main() {
 	db = igcDB{}
@@ -155,6 +166,7 @@ func main() {
 	ids = nil
 	port := os.Getenv("PORT")
 	http.HandleFunc("/paragliding/api", getApi)
-	http.HandleFunc("/paragliding/api/igc/", igcHandler)
+	http.HandleFunc("/paragliding/api/track/", trackHandler)
+	http.HandleFunc("/paragliding/api/ticker/latest", tickerHandler)
 	http.ListenAndServe(":"+port, nil)
 }
