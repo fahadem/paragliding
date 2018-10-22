@@ -124,7 +124,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				rgx, _ := regexp.Compile("^id[0-9]*")
 				id := parts[4]
 				if rgx.MatchString(id) == true {
-					igcWanted = db.Get(id)
+					Wanted = db.Get(id)
 
 					//encode the File
 					url := Wanted.Url
@@ -169,7 +169,7 @@ var latestT time.Time
 
 func main() {
 	db = igcDB{}
-	db.igcs = map[string]igcFile{}
+	db.igcs = map[string]File{}
 	idCount = 0
 	ids = nil
 	port := os.Getenv("PORT")
