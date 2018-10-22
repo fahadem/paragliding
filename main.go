@@ -25,7 +25,7 @@ type Ticker struct {
 	T_latest string //"t_latest": <latest added timestamp>,
 	T_start string //"t_start": <the first timestamp of the added track>, this will be the oldest track recorded
 	T_stop string //"t_stop": <the last timestamp of the added track>, this might equal to t_latest if there are no more tracks left
-	Tracks []Track{} //"tracks": [<id1>, <id2>, ...]
+	Tracks []Track //"tracks": [<id1>, <id2>, ...]
 	Processing time.Time //"processing": <time in ms of how long it took to process the request>
 }
 
