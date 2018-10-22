@@ -151,7 +151,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 func tickerHandler(w http.ResponseWriter, r *http.Request) {
 	//http.Header.Add(w.Header(), "content-type", "application/json")
 	//parts := strings.Split(r.URL.Path, "/")
-	json.NewEncoder(w).Encode(time.Since(latestT))
+	json.NewEncoder(w).Encode(time.Since(latestT).String())
 }
 
 var db igcDB
