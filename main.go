@@ -67,7 +67,8 @@ func (db igcDB) Get(idWanted string) File {
 
 func getApi(w http.ResponseWriter, r *http.Request) {
 	http.Header.Add(w.Header(), "content-type", "application/json")
-
+	//parts := strings.Split(r.URL.Path, "/")
+	//if len(parts) < 2 
 	api := Api{Uptime: time.Now(),
     		 Info: "Service for IGC tracks.",
     		 Version: "v1",
@@ -127,20 +128,18 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 					Wanted = db.Get(id)
 
 					//encode the File
-					//url := Wanted.Url
-					url := "http://skypolaris.org/wp-content/uploads/IGS%20Files/Madrid%20to%20Jerez.igc"
+					url := Wanted.Url
 					track, err := igc.ParseLocation(url)
 					if err != nil {
 						//fmt.Errorf("Problem reading the track", err)
 					}
 					T := Track{
+						T.H_date: track.Date.String(),4						T.Pilot: track.Pilot,
 						T.Glider: track.GliderType,
 						T.Glider_id: track.GliderID,
-						T.Pilot: track.Pilot,
 						T.Track_length: track.Task.Distance(),
-						T.H_date: track.Date.String(),
-						latestT: time.Now(),
 					}
+					latestT: time.Now(),
 					json.NewEncoder(w).Encode(T)
 
 
