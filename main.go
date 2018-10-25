@@ -106,7 +106,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			idCount += 1
 			//db.add(file, newId)
 			//json.NewEncoder(w).Encode(newId)
-			ids = append(ids,track.UniqueID)
+
 		}
 	case "GET":
 		{
@@ -121,7 +121,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if parts[4] == "" {
 				//deal with the array
-
+				ids = append(ids,track.UniqueID)
 				json.NewEncoder(w).Encode(ids)
 
 			}
