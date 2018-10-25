@@ -139,7 +139,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 						Glider_id: track.GliderID,
 						Track_length: track.Task.Distance(),
 					}
-					latestT: time.Now()
+					latestT = time.Now()
 					json.NewEncoder(w).Encode(T)
 
 
