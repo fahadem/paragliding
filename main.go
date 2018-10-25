@@ -127,7 +127,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 					Wanted = db.Get(id)
 
 					//encode the File
-					url := Wanted.Url
+					//url := Wanted.Url
 					s:="http://skypolaris.org/wp-content/uploads/IGS%20Files/Madrid%20to%20Jerez.igc"
 					track, err := igc.ParseLocation(s)
 					if err != nil {
