@@ -79,6 +79,7 @@ func getApi(w http.ResponseWriter, r *http.Request) {
 
 func trackHandler(w http.ResponseWriter, r *http.Request) {
 	http.Header.Add(w.Header(), "content-type", "application/json")
+	url:="http://skypolaris.org/wp-content/uploads/IGS%20Files/Madrid%20to%20Jerez.igc"
 	switch r.Method {
 	case "POST":
 		{
@@ -115,21 +116,21 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if parts[4] == "" {
 				//deal with the array
-				json.NewEncoder(w).Encode(ids)
-
+				//json.NewEncoder(w).Encode(ids)
+				track, err := igc.ParseLocation(url)
+				json.NewEncoder(w).Encode(track.UniqueID)
 			}
 			if parts[4] != "" {
 				//deal with the id
-				//var Wanted File
+
 				rgx, _ := regexp.Compile("^id[0-9]*")
 				id := parts[4]
 				if rgx.MatchString(id) == true {
 					//Wanted = db.Get(id)
 
 					//encode the File
-					//url := Wanted.Url
-					s:="http://skypolaris.org/wp-content/uploads/IGS%20Files/Madrid%20to%20Jerez.igc"
-					track, err := igc.ParseLocation(s)
+				
+					track, err := igc.ParseLocation(url)
 					if err != nil {
 						//fmt.Errorf("Problem reading the track", err)
 					}
