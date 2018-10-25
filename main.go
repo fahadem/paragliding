@@ -114,18 +114,18 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 
 			parts := strings.Split(r.URL.Path, "/")
 			
-			/*if len(parts) < 5 || len(parts) > 6 {
+			if len(parts) < 5 || len(parts) > 6 {
 				//deal with errors
 				json.NewEncoder(w).Encode("404")
 				return
-			}*/
-			if len(parts) == 4 {
+			}
+			if strings.Hasprefix(parts[4],"id") {
 				//deal with the array
 				ids = append(ids,track.UniqueID)
 				json.NewEncoder(w).Encode(ids)
 
 			}
-			if len(parts) == 5 {
+			if parts[4] != "" {
 				//deal with the id
 
 				rgx, _ := regexp.Compile("^id[0-9]*")
