@@ -114,11 +114,11 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 
 			parts := strings.Split(r.URL.Path, "/")
 			
-			if len(parts) < 5 || len(parts) > 6 {
+			/*if len(parts) < 5 || len(parts) > 6 {
 				//deal with errors
 				json.NewEncoder(w).Encode("404")
 				return
-			}
+			}*/
 			
 			if parts[4] == "" {
 				//deal with the array
@@ -149,12 +149,12 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				if rgx.MatchString(id) == false {
 					fmt.Fprintln(w, "Use format id0 or id21 for exemple")
 				}
-			}
-			if strings.HasPrefix(parts[5],"field") {//if parts[5] != "" {
+				if strings.HasPrefix(parts[5],"field") {//if parts[5] != "" {
 
-				/*fmt.Fprintf(w,"Pilot: %s, gliderType: %s, gliderId: %s,track_length: %f, H_date: %s, track_src_url: %s", track.Pilot, track.GliderType,track.GliderID,track.Task.Distance(), track.Date.String(),url)*/
-					json.NewEncoder(w).Encode(track)
+				fmt.Fprintf(w,"Pilot: %s, gliderType: %s, gliderId: %s,track_length: %f, H_date: %s, track_src_url: %s", track.Pilot, track.GliderType,track.GliderID,track.Task.Distance(), track.Date.String(),url)
+				}
 			}
+			
 		}
 	default:
 
