@@ -124,7 +124,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				//deal with the array
 				json.NewEncoder(w).Encode(ids)
 			}
-			if parts[4] != "" {
+			if strings.HasPrefix(parts[4],"id") { // != "" && parts[5{
 				//deal with the id
 
 				rgx, _ := regexp.Compile("^id[0-9]*")
@@ -149,7 +149,10 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 					fmt.Fprintln(w, "Use format id0 or id21 for exemple")
 				}
 			}
-
+			if parts[5] != "" {
+				http.Header.Add(w.Header(), "content-type", "text/plain")
+				fmt.Printf("Pilot: %s, gliderType: %s, gliderId: %s,track_length: %f, H_date: %s, track_src_url: %s", track.Pilot, track.GliderType,track.GliderID,track.Task.Distance(),url, track.Date.String())
+			}
 		}
 	default:
 
