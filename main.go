@@ -124,7 +124,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				rgx, _ := regexp.Compile("^id[0-9]*")
 				id := parts[4]
 				if rgx.MatchString(id) == true {
-					Wanted = db.Get(id)
+					//Wanted = db.Get(id)
 
 					//encode the File
 					//url := Wanted.Url
