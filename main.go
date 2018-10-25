@@ -152,7 +152,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if parts[5] != "" {
 
-				fmt.Printf("Pilot: %s, gliderType: %s, gliderId: %s,track_length: %f, H_date: %s, track_src_url: %s", track.Pilot, track.GliderType,track.GliderID,track.Task.Distance(),url, track.Date.String())
+				fmt.Fprintln(w,"Pilot: %s, gliderType: %s, gliderId: %s,track_length: %f, H_date: %s, track_src_url: %s", track.Pilot, track.GliderType,track.GliderID,track.Task.Distance(),url, track.Date.String())
 			}
 		}
 	default:
