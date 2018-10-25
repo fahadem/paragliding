@@ -132,13 +132,14 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 					if err != nil {
 						//fmt.Errorf("Problem reading the track", err)
 					}
-					T := Track{}
-					T.Glider = track.GliderType
-					T.Glider_id = track.GliderID
-					T.Pilot = track.Pilot
-					T.Track_length = track.Task.Distance()
-					T.H_date = track.Date.String()
-					latestT = time.Now()
+					T := Track{
+						T.Glider: track.GliderType,
+						T.Glider_id: track.GliderID,
+						T.Pilot: track.Pilot,
+						T.Track_length: track.Task.Distance(),
+						T.H_date: track.Date.String(),
+						latestT: time.Now(),
+					}
 					json.NewEncoder(w).Encode(T)
 
 
