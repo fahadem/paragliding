@@ -150,7 +150,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 		}
-	default:
+	default: {
 
 		http.Error(w, "Only GET and POST methods are supported", http.StatusNotImplemented)
 
