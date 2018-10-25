@@ -92,20 +92,21 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "no JSON body", http.StatusBadRequest)
 				return
 			}
-			var file File
-			err := json.NewDecoder(r.Body).Decode(&file)
+			//var file File
+			err := json.NewDecoder(r.Body).Decode(&url)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			}
 
 			//json.NewEncoder(w).Encode(url)
-			Idstr := "id"
-			strValue := fmt.Sprintf("%d", idCount)
-			newId := Idstr + strValue
-			ids = append(ids, newId)
+			//Idstr := "id"
+			//strValue := fmt.Sprintf("%d", idCount)
+			//newId := Idstr + strValue
+			//ids = append(ids, newId)
 			idCount += 1
-			db.add(file, newId)
-			json.NewEncoder(w).Encode(newId)
+			//db.add(file, newId)
+			//json.NewEncoder(w).Encode(newId)
+			ids = append(ids,track.UniqueID)
 		}
 	case "GET":
 		{
@@ -120,10 +121,9 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if parts[4] == "" {
 				//deal with the array
-				ids = append(ids,track.UniqueID)
+
 				json.NewEncoder(w).Encode(ids)
 
-				//json.NewEncoder(w).Encode(track.UniqueID)
 			}
 			if parts[4] != "" {
 				//deal with the id
@@ -131,14 +131,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				rgx, _ := regexp.Compile("^id[0-9]*")
 				id := parts[4]
 				if rgx.MatchString(id) == true {
-					//Wanted = db.Get(id)
-
-					//encode the File
-				
-					//track, err := igc.ParseLocation(url)
-					//if err != nil {
-						//fmt.Errorf("Problem reading the track", err)
-					//}
+									
 					T := Track{}
 					T.Glider = track.GliderType
 					T.Glider_id = track.GliderID
