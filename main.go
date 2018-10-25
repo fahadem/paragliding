@@ -119,17 +119,17 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				json.NewEncoder(w).Encode("404")
 				return
 			}
-			if strings.Hasprefix(parts[4],"id") {
+			
+			if parts[4] == "" {
 				//deal with the array
-				ids = append(ids,track.UniqueID)
 				json.NewEncoder(w).Encode(ids)
-
 			}
 			if parts[4] != "" {
 				//deal with the id
 
 				rgx, _ := regexp.Compile("^id[0-9]*")
 				id := parts[4]
+				ids = append(ids,track.UniqueID)
 				if rgx.MatchString(id) == true {
 									
 					T := Track{}
