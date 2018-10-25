@@ -78,7 +78,7 @@ func getApi(w http.ResponseWriter, r *http.Request) {
 }
 
 func trackHandler(w http.ResponseWriter, r *http.Request) {
-	http.Header.Add(w.Header(), "content-type", "application/json")
+
 	url:="http://skypolaris.org/wp-content/uploads/IGS%20Files/Madrid%20to%20Jerez.igc"
 	track, err := igc.ParseLocation(url)
 	if err != nil {
@@ -87,7 +87,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
 		{
-
+	http.Header.Add(w.Header(), "content-type", "application/json")
 			if r.Body == nil {
 				http.Error(w, "no JSON body", http.StatusBadRequest)
 				return
@@ -122,11 +122,12 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			
 			if parts[4] == "" {
 				//deal with the array
+	http.Header.Add(w.Header(), "content-type", "application/json")
 				json.NewEncoder(w).Encode(ids)
 			}
 			if strings.HasPrefix(parts[4],"id") { // != "" && parts[5{
 				//deal with the id
-
+	http.Header.Add(w.Header(), "content-type", "application/json")
 				rgx, _ := regexp.Compile("^id[0-9]*")
 				id := parts[4]
 				ids = append(ids,track.UniqueID)
@@ -149,10 +150,10 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 					fmt.Fprintln(w, "Use format id0 or id21 for exemple")
 				}
 			}
-			/*if parts[5] != "" {
+			if parts[5] != "" {
 
 				fmt.Printf("Pilot: %s, gliderType: %s, gliderId: %s,track_length: %f, H_date: %s, track_src_url: %s", track.Pilot, track.GliderType,track.GliderID,track.Task.Distance(),url, track.Date.String())
-			}*/
+			}
 		}
 	default:
 
