@@ -18,7 +18,7 @@ type Track struct {
 	Glider       string  `json:"glider,omitempty"` //"glider": <glider>,
 	Glider_id    string  `json:"glider_id,omitempty"` //"glider_id": <glider_id>,
 	Track_length float64 `json:"track_length,omitempty"` //"track_length": <calculated total track length>
-	Track_src_url string  `json:"track_src_url,omitempty"`  
+	Track_src_url string  `json:"track_src_url,omitempty"`  //<the original URL used to upload the track, ie. the URL used with POST>
 }
 
 type Ticker struct {
@@ -92,8 +92,8 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "no JSON body", http.StatusBadRequest)
 				return
 			}
-			var file File
-			err := json.NewDecoder(r.Body).Decode(&file)
+			//var file File
+			err := json.NewDecoder(r.Body).Decode(&url)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			}
@@ -138,6 +138,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 					T.Pilot = track.Pilot
 					T.Track_length = track.Task.Distance()
 					T.H_date = track.Date.String()
+					T.Track_src_url = url
 
 					latestT = time.Now()
 					json.NewEncoder(w).Encode(T)
