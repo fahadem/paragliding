@@ -118,6 +118,9 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				//deal with the array
 				//json.NewEncoder(w).Encode(ids)
 				track, err := igc.ParseLocation(url)
+				if err != nil {
+						//fmt.Errorf("Problem reading the track", err)
+				}
 				json.NewEncoder(w).Encode(track.UniqueID)
 			}
 			if parts[4] != "" {
