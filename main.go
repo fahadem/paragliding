@@ -80,6 +80,10 @@ func getApi(w http.ResponseWriter, r *http.Request) {
 func trackHandler(w http.ResponseWriter, r *http.Request) {
 	http.Header.Add(w.Header(), "content-type", "application/json")
 	url:="http://skypolaris.org/wp-content/uploads/IGS%20Files/Madrid%20to%20Jerez.igc"
+	track, err := igc.ParseLocation(url)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
 	switch r.Method {
 	case "POST":
 		{
@@ -116,12 +120,10 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if parts[4] == "" {
 				//deal with the array
-				//json.NewEncoder(w).Encode(ids)
-				track, err := igc.ParseLocation(url)
-				if err != nil {
-						//fmt.Errorf("Problem reading the track", err)
-				}
-				json.NewEncoder(w).Encode(track.UniqueID)
+				ids = append(ids,track.UniqueID)
+				json.NewEncoder(w).Encode(ids)
+
+				//json.NewEncoder(w).Encode(track.UniqueID)
 			}
 			if parts[4] != "" {
 				//deal with the id
@@ -133,10 +135,10 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 
 					//encode the File
 				
-					track, err := igc.ParseLocation(url)
-					if err != nil {
+					//track, err := igc.ParseLocation(url)
+					//if err != nil {
 						//fmt.Errorf("Problem reading the track", err)
-					}
+					//}
 					T := Track{}
 					T.Glider = track.GliderType
 					T.Glider_id = track.GliderID
