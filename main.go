@@ -125,14 +125,14 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 	http.Header.Add(w.Header(), "content-type", "application/json")
 				json.NewEncoder(w).Encode(ids)
 			}
-			if strings.HasPrefix(parts[4],"id") { // != "" && parts[5{
+			if strings.HasPrefix(parts[4],"id") && parts[5] == "" { 
 				//deal with the id
-	http.Header.Add(w.Header(), "content-type", "application/json")
+
 				rgx, _ := regexp.Compile("^id[0-9]*")
 				id := parts[4]
 				ids = append(ids,track.UniqueID)
 				if rgx.MatchString(id) == true {
-									
+					http.Header.Add(w.Header(), "content-type", "application/json")
 					T := Track{}
 					T.Glider = track.GliderType
 					T.Glider_id = track.GliderID
@@ -149,7 +149,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				if rgx.MatchString(id) == false {
 					fmt.Fprintln(w, "Use format id0 or id21 for exemple")
 				}
-				if strings.HasPrefix(parts[5],"field") {//if parts[5] != "" {
+				if strings.HasPrefix(parts[5],"field") {
 
 				fmt.Fprintf(w,"Pilot: %s, gliderType: %s, gliderId: %s,track_length: %f, H_date: %s, track_src_url: %s", track.Pilot, track.GliderType,track.GliderID,track.Task.Distance(), track.Date.String(),url)
 				}
