@@ -18,7 +18,7 @@ type Track struct {
 	Glider       string  `json:"glider,omitempty"` //"glider": <glider>,
 	Glider_id    string  `json:"glider_id,omitempty"` //"glider_id": <glider_id>,
 	Track_length float64 `json:"track_length,omitempty"` //"track_length": <calculated total track length>
-	Track_src_url string
+	Track_src_url string  `json:"track_src_url,omitempty"`  
 }
 
 type Ticker struct {
