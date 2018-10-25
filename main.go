@@ -13,20 +13,20 @@ import (
 
 
 type Track struct {
-	H_date       string  //"H_date": <date from File Header, H-record>,
-	Pilot        string  //"pilot": <pilot>,
-	Glider       string  //"glider": <glider>,
-	Glider_id    string  //"glider_id": <glider_id>,
-	Track_length float64 //"track_length": <calculated total track length>
+	H_date       string  `json:"H_date,omitempty"` //"H_date": <date from File Header, H-record>,
+	Pilot        string  `json:"pilot,omitempty"` //"pilot": <pilot>,
+	Glider       string  `json:"glider,omitempty"` //"glider": <glider>,
+	Glider_id    string  `json:"glider_id,omitempty"` //"glider_id": <glider_id>,
+	Track_length float64 `json:"track_length,omitempty"` //"track_length": <calculated total track length>
 	Track_src_url string
 }
 
 type Ticker struct {
-	T_latest string //"t_latest": <latest added timestamp>,
-	T_start string //"t_start": <the first timestamp of the added track>, this will be the oldest track recorded
-	T_stop string //"t_stop": <the last timestamp of the added track>, this might equal to t_latest if there are no more tracks left
-	Tracks []Track //"tracks": [<id1>, <id2>, ...]
-	Processing time.Time //"processing": <time in ms of how long it took to process the request>
+	T_latest string `json:"t_latest,omitempty"` //"t_latest": <latest added timestamp>,
+	T_start string `json:"t_start,omitempty"` //"t_start": <the first timestamp of the added track>, this will be the oldest track recorded
+	T_stop string `json:"t_stop,omitempty"` //"t_stop": <the last timestamp of the added track>, this might equal to t_latest if there are no more tracks left
+	Tracks []Track `json:"tracks,omitempty"` //"tracks": [<id1>, <id2>, ...]
+	Processing time.Time `json:"processing,omitempty"` //"processing": <time in ms of how long it took to process the request>
 }
 
 type Api struct {
