@@ -92,8 +92,8 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "no JSON body", http.StatusBadRequest)
 				return
 			}
-			//var file File
-			err := json.NewDecoder(r.Body).Decode(&url)
+			var file File
+			err := json.NewDecoder(r.Body).Decode(&file)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			}
