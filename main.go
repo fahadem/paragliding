@@ -67,8 +67,7 @@ func (db igcDB) Get(idWanted string) File {
 
 func getApi(w http.ResponseWriter, r *http.Request) {
 	http.Header.Add(w.Header(), "content-type", "application/json")
-	//parts := strings.Split(r.URL.Path, "/")
-	//if len(parts) < 2 
+
 	api := Api{Uptime: time.Now(),
     		 Info: "Service for IGC tracks.",
     		 Version: "v1",
@@ -129,16 +128,18 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 
 					//encode the File
 					url := Wanted.Url
-					track, err := igc.ParseLocation(url)
+					s:="http://skypolaris.org/wp-content/uploads/IGS%20Files/Madrid%20to%20Jerez.igc"
+					track, err := igc.ParseLocation(s)
 					if err != nil {
 						//fmt.Errorf("Problem reading the track", err)
 					}
-					T := Track{
-						H_date: track.Date.String(),4						Pilot: track.Pilot,
-						Glider: track.GliderType,
-						Glider_id: track.GliderID,
-						Track_length: track.Task.Distance(),
-					}
+					T := Track{}
+					T.Glider = track.GliderType
+					T.Glider_id = track.GliderID
+					T.Pilot = track.Pilot
+					T.Track_length = track.Task.Distance()
+					T.H_date = track.Date.String()
+
 					latestT = time.Now()
 					json.NewEncoder(w).Encode(T)
 
@@ -150,7 +151,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 		}
-	default: {
+	default:
 
 		http.Error(w, "Only GET and POST methods are supported", http.StatusNotImplemented)
 
