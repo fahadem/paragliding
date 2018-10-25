@@ -114,11 +114,11 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 
 			parts := strings.Split(r.URL.Path, "/")
 			
-			if len(parts) < 5 || len(parts) > 6 {
+			/*if len(parts) < 5 || len(parts) > 6 {
 				//deal with errors
 				json.NewEncoder(w).Encode("404")
 				return
-			}
+			}*/
 			
 			if parts[4] == "" {
 				//deal with the array
