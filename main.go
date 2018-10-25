@@ -151,7 +151,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				}
 				if strings.HasPrefix(parts[5],"field") {
 
-				fmt.Fprintf(w,"Pilot: %s, gliderType: %s, gliderId: %s,track_length: %f, H_date: %s, track_src_url: %s", track.Pilot, track.GliderType,track.GliderID,track.Task.Distance(), track.Date.String(),url)
+					fmt.Fprintf(w,"Pilot: %s, gliderType: %s, gliderId: %s,track_length: %f, H_date: %s, track_src_url: %s", track.Pilot, track.GliderType,track.GliderID,track.Task.Distance(), track.Date.String(),url)
 				}
 			}
 			
