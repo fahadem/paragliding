@@ -120,7 +120,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if parts[4] != "" {
 				//deal with the id
-				var Wanted File
+				//var Wanted File
 				rgx, _ := regexp.Compile("^id[0-9]*")
 				id := parts[4]
 				if rgx.MatchString(id) == true {
