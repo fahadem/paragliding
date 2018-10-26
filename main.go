@@ -165,7 +165,6 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 
 func latestTicker(w http.ResponseWriter, r *http.Request) {
 
-	//parts := strings.Split(r.URL.Path, "/")
 	json.NewEncoder(w).Encode(time.Since(timestamp[len(timestamp)-1]).String())
 }
 
@@ -177,7 +176,7 @@ func getApiTicker(w http.ResponseWriter, r *http.Request) {
 			T_start: timestamp[0].String(),
 			T_stop: timestamp[len(timestamp)-1].String(),
 			Tracks: ids,
-			Processing: time.Since(start),
+			Processing: time.Since(start).Seconds()*1e3,
 		  }
 	json.NewEncoder(w).Encode(ticker)
 }
