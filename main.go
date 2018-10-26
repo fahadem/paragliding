@@ -164,12 +164,17 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func latestTicker(w http.ResponseWriter, r *http.Request) {
-
+	if len(timestamp) < 1 {
+		json.NewEncoder(w).Encode("Open /api/track/<id>/ at first")
+	}
 	json.NewEncoder(w).Encode(time.Since(timestamp[len(timestamp)-1]).String())
 }
 
 func getApiTicker(w http.ResponseWriter, r *http.Request) {
 	http.Header.Add(w.Header(), "content-type", "application/json")
+	if len(timestamp) < 1 {
+		json.NewEncoder(w).Encode("Open /api/track/<id>/ at first")
+	}
 	start := time.Now()
 	ticker := Ticker{
 			T_latest: timestamp[len(timestamp)-1].String(),
