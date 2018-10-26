@@ -26,7 +26,7 @@ type Ticker struct {
 	T_start string `json:"t_start,omitempty"` //"t_start": <the first timestamp of the added track>, this will be the oldest track recorded
 	T_stop string `json:"t_stop,omitempty"` //"t_stop": <the last timestamp of the added track>, this might equal to t_latest if there are no more tracks left
 	Tracks []string `json:"tracks,omitempty"` //"tracks": [<id1>, <id2>, ...]
-	Processing time.Duration `json:"processing,omitempty"` //"processing": <time in ms of how long it took to process the request>
+	Processing float64 `json:"processing,omitempty"` //"processing": <time in ms of how long it took to process the request>
 }
 
 type Api struct {
