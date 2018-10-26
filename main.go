@@ -25,7 +25,7 @@ type Ticker struct {
 	T_latest string `json:"t_latest,omitempty"` //"t_latest": <latest added timestamp>,
 	T_start string `json:"t_start,omitempty"` //"t_start": <the first timestamp of the added track>, this will be the oldest track recorded
 	T_stop string `json:"t_stop,omitempty"` //"t_stop": <the last timestamp of the added track>, this might equal to t_latest if there are no more tracks left
-	Tracks []Track `json:"tracks,omitempty"` //"tracks": [<id1>, <id2>, ...]
+	Tracks []string `json:"tracks,omitempty"` //"tracks": [<id1>, <id2>, ...]
 	Processing time.Time `json:"processing,omitempty"` //"processing": <time in ms of how long it took to process the request>
 }
 
@@ -87,7 +87,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
 		{
-	http.Header.Add(w.Header(), "content-type", "application/json")
+			http.Header.Add(w.Header(), "content-type", "application/json")
 			if r.Body == nil {
 				http.Error(w, "no JSON body", http.StatusBadRequest)
 				return
@@ -120,9 +120,9 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}*/
 			
-			if parts[4] == "" {
+			if strings.HasPrefix(parts[3],"track") && parts[4] == "" {
 				//deal with the array
-	http.Header.Add(w.Header(), "content-type", "application/json")
+				http.Header.Add(w.Header(), "content-type", "application/json")
 				json.NewEncoder(w).Encode(ids)
 			}
 			if strings.HasPrefix(parts[4],"id") && parts[5] == "" { 
@@ -141,7 +141,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 					T.H_date = track.Date.String()
 					T.Track_src_url = url
 
-					latestT = time.Now()
+					timestamp = append(timestamp,time.Now())
 					json.NewEncoder(w).Encode(T)
 
 
@@ -164,15 +164,28 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func latestTicker(w http.ResponseWriter, r *http.Request) {
-	//http.Header.Add(w.Header(), "content-type", "application/json")
+
 	//parts := strings.Split(r.URL.Path, "/")
-	json.NewEncoder(w).Encode(time.Since(latestT).String())
+	json.NewEncoder(w).Encode(time.Since(timestamp[len(timestamp)-1]).String())
 }
 
+func getApiTicker(w http.ResponseWriter, r *http.Request) {
+	http.Header.Add(w.Header(), "content-type", "application/json")
+	a := time.Now()
+	ticker := Ticker{
+			T_latest: timestamp[len(timestamp)-1],
+			T_start: timestamp[0],
+			T_stop: timestamp[len(timestamp)-1],
+			Tracks: ids,
+			Processing: time.Now() - a,
+		  }
+	json.NewEncoder(w).Encode(ticker)
+}
 var db igcDB
 var ids []string
 var idCount int
-var latestT time.Time
+var timestamp []time.Time
+//var ticker time.Time
 
 func main() {
 	db = igcDB{}
@@ -183,5 +196,6 @@ func main() {
 	http.HandleFunc("/paragliding/api", getApi)
 	http.HandleFunc("/paragliding/api/track/", trackHandler)
 	http.HandleFunc("/paragliding/api/ticker/latest", latestTicker)
+	http.HandleFunc("/paragliding/api/ticker/", getApiTicker)
 	http.ListenAndServe(":"+port, nil)
 }
