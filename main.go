@@ -173,9 +173,9 @@ func getApiTicker(w http.ResponseWriter, r *http.Request) {
 	http.Header.Add(w.Header(), "content-type", "application/json")
 	a := time.Now()
 	ticker := Ticker{
-			T_latest: timestamp[len(timestamp)-1],
-			T_start: timestamp[0],
-			T_stop: timestamp[len(timestamp)-1],
+			T_latest: timestamp[len(timestamp)-1].String(),
+			T_start: timestamp[0].String(),
+			T_stop: timestamp[len(timestamp)-1].String(),
 			Tracks: ids,
 			Processing: time.Now() - a,
 		  }
