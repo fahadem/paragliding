@@ -128,7 +128,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				//deal with the id
 
 				rgx, _ := regexp.Compile("^id[0-9]*")
-				id := parts[4] `json:"id,omitempty"`
+				id := parts[4] 
 				ids = append(ids,id)
 				if rgx.MatchString(id) == true {
 					http.Header.Add(w.Header(), "content-type", "application/json")
