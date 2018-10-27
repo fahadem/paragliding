@@ -128,8 +128,8 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				//deal with the id
 
 				rgx, _ := regexp.Compile("^id[0-9]*")
-				id := parts[4]
-				ids = append(ids,track.UniqueID)
+				id := parts[4] `json:"id,omitempty"`
+				ids = append(ids,id)
 				if rgx.MatchString(id) == true {
 					http.Header.Add(w.Header(), "content-type", "application/json")
 					T := Track{}
@@ -185,7 +185,7 @@ func getApiTicker(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(ticker)
 }
 var db igcDB
-var ids []string
+var ids []string //`json:"id,omitempty"`
 var idCount int
 var timestamp []time.Time
 //var ticker time.Time
