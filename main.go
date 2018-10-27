@@ -185,7 +185,7 @@ func getApiTicker(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(ticker)
 }
 var db igcDB
-var ids []string //`json:"id,omitempty"`
+var ids []string 
 var idCount int
 var timestamp []time.Time
 //var ticker time.Time
@@ -196,7 +196,7 @@ func main() {
 	idCount = 0
 	ids = nil
 	port := os.Getenv("PORT")
-	http.HandleFunc("/paragliding/api", getApi)
+	http.HandleFunc("/paragliding/api/", getApi)
 	http.HandleFunc("/paragliding/api/track/", trackHandler)
 	http.HandleFunc("/paragliding/api/ticker/latest", latestTicker)
 	http.HandleFunc("/paragliding/api/ticker/", getApiTicker)
