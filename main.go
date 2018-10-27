@@ -92,13 +92,12 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "no JSON body", http.StatusBadRequest)
 				return
 			}
-			//var file File
+
 			err := json.NewDecoder(r.Body).Decode(&url)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			}
 
-			//json.NewEncoder(w).Encode(url)
 			//Idstr := "id"
 			//strValue := fmt.Sprintf("%d", idCount)
 			//newId := Idstr + strValue
@@ -135,7 +134,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 					http.Header.Add(w.Header(), "content-type", "application/json")
 					T := Track{}
 					T.Glider = track.GliderType
-					T.Glider_id = track.GliderID
+					T.Glider_id = id
 					T.Pilot = track.Pilot
 					T.Track_length = track.Task.Distance()
 					T.H_date = track.Date.String()
@@ -164,17 +163,17 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func latestTicker(w http.ResponseWriter, r *http.Request) {
-	if len(timestamp) < 1 {
+	/*if len(timestamp) < 1 {
 		json.NewEncoder(w).Encode("Open /api/track/<id>/ at first")
-	}
+	}*/
 	json.NewEncoder(w).Encode(time.Since(timestamp[len(timestamp)-1]).String())
 }
 
 func getApiTicker(w http.ResponseWriter, r *http.Request) {
 	http.Header.Add(w.Header(), "content-type", "application/json")
-	if len(timestamp) < 1 {
+	/*if len(timestamp) < 1 {
 		json.NewEncoder(w).Encode("Open /api/track/<id>/ at first")
-	}
+	}*/
 	start := time.Now()
 	ticker := Ticker{
 			T_latest: timestamp[len(timestamp)-1].String(),
