@@ -11,6 +11,11 @@ import (
 	"github.com/marni/goigc"
 )
 
+type Api struct {
+	Uptime time.Time `json:"uptime,omitempty"`
+	Info string `json:"info,omitempty"`
+	Version string `json:"version,omitempty"`
+}
 
 type Track struct {
 	H_date       string  `json:"H_date,omitempty"` //"H_date": <date from File Header, H-record>,
@@ -29,11 +34,9 @@ type Ticker struct {
 	Processing float64 `json:"processing,omitempty"` //"processing": <time in ms of how long it took to process the request>
 }
 
-type Api struct {
-	Uptime time.Time `json:"uptime,omitempty"`
-	Info string `json:"info,omitempty"`
-	Version string `json:"version,omitempty"`
-
+type Webhook struct {
+	Webhook_url string `json:"webhookURL,omitempty"`
+	Min_Trigger_Value int64 `json:"minTriggerValue,omitempty"`
 }
 type File struct {
 	Url string `json:"url,omitempty"`
@@ -72,9 +75,7 @@ func getApi(w http.ResponseWriter, r *http.Request) {
     		 Info: "Service for IGC tracks.",
     		 Version: "v1",
 	}
-
 	json.NewEncoder(w).Encode(api)
-
 }
 
 func trackHandler(w http.ResponseWriter, r *http.Request) {
@@ -102,7 +103,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			//strValue := fmt.Sprintf("%d", idCount)
 			//newId := Idstr + strValue
 			//ids = append(ids, newId)
-			idCount += 1
+			//idCount += 1
 			//db.add(file, newId)
 			//json.NewEncoder(w).Encode(newId)
 
@@ -126,10 +127,10 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if strings.HasPrefix(parts[4],"id") && parts[5] == "" { 
 				//deal with the id
-
 				rgx, _ := regexp.Compile("^id[0-9]*")
 				id := parts[4] 
 				ids = append(ids,id)
+				idCount += 1
 				if rgx.MatchString(id) == true {
 					http.Header.Add(w.Header(), "content-type", "application/json")
 					T := Track{}
@@ -142,8 +143,6 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 
 					timestamp = append(timestamp,time.Now())
 					json.NewEncoder(w).Encode(T)
-
-
 				}
 				if rgx.MatchString(id) == false {
 					fmt.Fprintln(w, "Use format id0 or id21 for exemple")
@@ -153,27 +152,19 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 					fmt.Fprintf(w,"Pilot: %s, gliderType: %s, gliderId: %s,track_length: %f, H_date: %s, track_src_url: %s", track.Pilot, track.GliderType,track.GliderID,track.Task.Distance(), track.Date.String(),url)
 				}
 			}
-			
 		}
 	default:
-
 		http.Error(w, "Only GET and POST methods are supported", http.StatusNotImplemented)
-
 	}
 }
 
 func latestTicker(w http.ResponseWriter, r *http.Request) {
-	/*if len(timestamp) < 1 {
-		json.NewEncoder(w).Encode("Open /api/track/<id>/ at first")
-	}*/
 	json.NewEncoder(w).Encode(time.Since(timestamp[len(timestamp)-1]).String())
 }
 
 func getApiTicker(w http.ResponseWriter, r *http.Request) {
 	http.Header.Add(w.Header(), "content-type", "application/json")
-	/*if len(timestamp) < 1 {
-		json.NewEncoder(w).Encode("Open /api/track/<id>/ at first")
-	}*/
+	
 	start := time.Now()
 	ticker := Ticker{
 			T_latest: timestamp[len(timestamp)-1].String(),
@@ -184,11 +175,23 @@ func getApiTicker(w http.ResponseWriter, r *http.Request) {
 		  }
 	json.NewEncoder(w).Encode(ticker)
 }
+
+func handleWebhook(w http.ResponseWriter, r *http.Request) {
+	webhookData := make(map[string]interface{})
+	err := json.NewDecoder(r.Body).Decode(&webhookData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Println("got webhook payload: ")
+	for k, v := range webhookData {
+		fmt.Printf("%s : %v\n", k, v)
+	}
+}
 var db igcDB
 var ids []string 
 var idCount int
 var timestamp []time.Time
-//var ticker time.Time
 
 func main() {
 	db = igcDB{}
