@@ -38,6 +38,7 @@ type Webhook struct {
 	Webhook_Url string `json:"webhookURL,omitempty"`
 	Min_Trigger_Value int64 `json:"minTriggerValue,omitempty"`
 }
+
 type File struct {
 	Url string `json:"url,omitempty"`
 }
@@ -103,26 +104,12 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			}
 
-			//Idstr := "id"
-			//strValue := fmt.Sprintf("%d", idCount)
-			//newId := Idstr + strValue
-			//ids = append(ids, newId)
-			//idCount += 1
-			//db.add(file, newId)
-			//json.NewEncoder(w).Encode(newId)
-
 		}
 	case "GET":
 		{
 			//GET case
 
 			parts := strings.Split(r.URL.Path, "/")
-			
-			/*if len(parts) < 5 || len(parts) > 6 {
-				//deal with errors
-				json.NewEncoder(w).Encode("404")
-				return
-			}*/
 			
 			if strings.HasPrefix(parts[3],"track") && parts[4] == "" {
 				//deal with the array
