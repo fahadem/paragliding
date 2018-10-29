@@ -69,11 +69,12 @@ func (db igcDB) Get(idWanted string) File {
 }
 
 func getApi(w http.ResponseWriter, r *http.Request) {
-	http.Header.Add(w.Header(), "content-type", "application/json")
+
 	parts := strings.Split(r.URL.Path, "/")
 	if parts[2] == "" {
-		parts[2] = "api"
+		http.Redirect(w,r,"https://fahadem2.herokuapp.com/paragliding/api",301)
 	}
+	http.Header.Add(w.Header(), "content-type", "application/json")
 	api := Api{Uptime: time.Now(),
     		 Info: "Service for IGC tracks.",
     		 Version: "v1",
