@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"strconv"
 	"github.com/marni/goigc"
 )
 
@@ -69,6 +70,14 @@ func (db igcDB) Get(idWanted string) File {
 	return File{}
 }
 
+func (db igcDB) alreadyInDb(fileW igcFile) bool {
+	for _, file := range db.igcs {
+		if file.Url == fileW.Url {
+			return true
+		}
+	}
+	return false
+}
 func getApi(w http.ResponseWriter, r *http.Request) {
 
 	parts := strings.Split(r.URL.Path, "/")
@@ -91,6 +100,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	switch r.Method {
+	start := time.Now()
 	case "POST":
 		{
 			http.Header.Add(w.Header(), "content-type", "application/json")
@@ -102,6 +112,23 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			err := json.NewDecoder(r.Body).Decode(&url)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
+			}
+			
+			//send message to webhooks
+			t := time.Now().Nanosecond()
+			e = time.Since(start).Seconds().String()
+			t_conv := strconv.Itoa(t)
+			text := "{\"text\": \"Timestamp :" + t_conv + ", new track is " + ids + " (processing time is " + e + ")\"}"
+			payload := strings.NewReader(text)
+			for _, wh := range dbWh {
+				client := &http.Client{Timeout: (time.Second * 30)}
+				req, err := http.NewRequest("POST", wh.Webhook_Url, payload)
+				req.Header.Set("Content-Type", "application/json")
+				resp, err := client.Do(req)
+				if err != nil {
+					fmt.Print(err.Error())
+				}
+				fmt.Println(resp.Status)
 			}
 
 		}
@@ -119,11 +146,13 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			if strings.HasPrefix(parts[4],"id") && parts[5] == "" { 
 				//deal with the id
 				rgx, _ := regexp.Compile("^id[0-9]*")
-				id := parts[4] 
+				id := parts[4]
 				ids = append(ids,id)
-				idCount += 1
+
 				if rgx.MatchString(id) == true {
 					http.Header.Add(w.Header(), "content-type", "application/json")
+					db.add(dbId,id) 
+					idCount += 1
 					T := Track{}
 					T.Glider = track.GliderType
 					T.Glider_id = id
@@ -168,24 +197,74 @@ func getApiTicker(w http.ResponseWriter, r *http.Request) {
 }
 
 func webhookNewTrack(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "501 - Method not implemented", http.StatusNotImplemented)
-		return
-	}
 	http.Header.Add(w.Header(), "content-type", "application/json")
-	webhook := Webhook {}
-	
-	err := json.NewDecoder(r.Body).Decode(&webhook)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	parts := strings.Split(r.URL.Path, "/")
+	switch r.Method {
+		case "POST":
+		{
+			webhook := Webhook {}	
+			err := json.NewDecoder(r.Body).Decode(&webhook)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			idCountWh += 1
+			idWh = parts[5]
+			whDB[idWh] = wh
+		}
+		case "GET":
+		{
+			if strings.HasPrefix(parts[5],"id") {
+				idWanted := parts[5]
+				for id, file := range whDB {
+					if id == idWanted {
+						json.NewEncoder(w).Encode(file)
+					}
+				}
+			}
+		}
+		case "DELETE":
+		{
+			if strings.HasPrefix(parts[5],"id") {
+				idWanted := parts[5]
+				for id, file := range whDB {
+					if id == idWanted {
+						json.NewEncoder(w).Encode(file)
+						delete(whDB, idWant)
+					}
+				}
+			}
+		}
+		default:
+			http.NotFound(w, r)
+
+	}	
+}
+
+func adminCount(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(db.Count())
+}
+
+func adminDel(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "DELETE" {
+		nbDel := 0
+		ids = []string{}
+		for id, _ := range db.igcs {
+			delete(db.igcs, id)
+			nbDel += 1
+		}
+		json.NewEncoder(w).Encode(nbDel)
 	}
-	
 }
 var db igcDB
-var ids []string 
+var ids []string
+var dbId []string 
 var idCount int
+var idCountWh int
+var idWh string
+var dbWh map[string]Webhook
 var timestamp []time.Time
+webhookURL:= "https://hooks.slack.com/services/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"
 
 func main() {
 	db = igcDB{}
@@ -199,5 +278,7 @@ func main() {
 	http.HandleFunc("/paragliding/api/ticker/latest", latestTicker)
 	http.HandleFunc("/paragliding/api/ticker/", getApiTicker)
 	http.HandleFunc("/paragliding/api/webhook/new_track/", webhookNewTrack)
+	http.HandleFunc("/admin/api/tracks_count", adminCount)
+	http.HandleFunc("/admin/api/tracks", adminDel)
 	http.ListenAndServe(":"+port, nil)
 }
