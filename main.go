@@ -121,7 +121,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			e = time.Since(start).Seconds()
 			t_conv := strconv.Itoa(t)
 			e_conv := fmt.Sprintf("%f", e)
-			text := "{\"text\": \"Timestamp :" + t_conv + ", new track is " + parts[5] + " (processing time is " + e + ")\"}"
+			text := "{\"text\": \"Timestamp :" + t_conv + ", new track is " + parts[5] + " (processing time is " + e_conv + ")\"}"
 			payload := strings.NewReader(text)
 			for _, wh := range dbWh {
 				client := &http.Client{Timeout: (time.Second * 30)}
@@ -214,7 +214,7 @@ func webhookNewTrack(w http.ResponseWriter, r *http.Request) {
 			}
 			idCountWh += 1
 			idWh = parts[5]
-			dbWh[idWh] = wh
+			dbWh[idWh] = webhook
 		}
 		case "GET":
 		{
