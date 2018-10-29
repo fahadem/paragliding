@@ -70,7 +70,7 @@ func (db igcDB) Get(idWanted string) File {
 	return File{}
 }
 
-func (db igcDB) alreadyInDb(fileW igcFile) bool {
+func (db igcDB) alreadyInDb(fileW File) bool {
 	for _, file := range db.igcs {
 		if file.Url == fileW.Url {
 			return true
@@ -114,12 +114,12 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 			}
-			
+
 			//send message to webhooks
-			t := time.Now().Nanosecond()
+			t = time.Now().Nanosecond()
 			e = time.Since(start).Seconds().String()
 			t_conv := strconv.Itoa(t)
-			text := "{\"text\": \"Timestamp :" + t_conv + ", new track is " + ids + " (processing time is " + e + ")\"}"
+			text := "{\"text\": \"Timestamp :" + t_conv + ", new track is " + parts[5] + " (processing time is " + e + ")\"}"
 			payload := strings.NewReader(text)
 			for _, wh := range dbWh {
 				client := &http.Client{Timeout: (time.Second * 30)}
@@ -152,7 +152,8 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 
 				if rgx.MatchString(id) == true {
 					http.Header.Add(w.Header(), "content-type", "application/json")
-					db.add(dbId,id) 
+					var f File
+					db.add(f,id) 
 					idCount += 1
 					T := Track{}
 					T.Glider = track.GliderType
@@ -211,13 +212,13 @@ func webhookNewTrack(w http.ResponseWriter, r *http.Request) {
 			}
 			idCountWh += 1
 			idWh = parts[5]
-			whDB[idWh] = wh
+			dbWh[idWh] = wh
 		}
 		case "GET":
 		{
 			if strings.HasPrefix(parts[5],"id") {
 				idWanted := parts[5]
-				for id, file := range whDB {
+				for id, file := range dbWh {
 					if id == idWanted {
 						json.NewEncoder(w).Encode(file)
 					}
@@ -228,7 +229,7 @@ func webhookNewTrack(w http.ResponseWriter, r *http.Request) {
 		{
 			if strings.HasPrefix(parts[5],"id") {
 				idWanted := parts[5]
-				for id, file := range whDB {
+				for id, file := range dbWh {
 					if id == idWanted {
 						json.NewEncoder(w).Encode(file)
 						delete(whDB, idWant)
@@ -265,6 +266,8 @@ var idCountWh int
 var idWh string
 var dbWh map[string]Webhook
 var timestamp []time.Time
+var t int
+var e float64
 //webhookURL:= "https://hooks.slack.com/services/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"
 
 func main() {
