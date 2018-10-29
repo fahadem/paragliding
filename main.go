@@ -70,6 +70,7 @@ func (db igcDB) Get(idWanted string) File {
 
 func getApi(w http.ResponseWriter, r *http.Request) {
 	http.Header.Add(w.Header(), "content-type", "application/json")
+	parts := strings.Split(r.URL.Path, "/")
 	if parts[2] == "" {
 		parts[2] = "api"
 	}
