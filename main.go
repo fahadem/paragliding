@@ -105,6 +105,7 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 		{
 			start := time.Now()
 			http.Header.Add(w.Header(), "content-type", "application/json")
+			parts := strings.Split(r.URL.Path, "/")
 			if r.Body == nil {
 				http.Error(w, "no JSON body", http.StatusBadRequest)
 				return
@@ -117,8 +118,9 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 
 			//send message to webhooks
 			t = time.Now().Nanosecond()
-			e = time.Since(start).Seconds().String()
+			e = time.Since(start).Seconds()
 			t_conv := strconv.Itoa(t)
+			e_conv := fmt.Sprintf("%f", e)
 			text := "{\"text\": \"Timestamp :" + t_conv + ", new track is " + parts[5] + " (processing time is " + e + ")\"}"
 			payload := strings.NewReader(text)
 			for _, wh := range dbWh {
@@ -232,7 +234,7 @@ func webhookNewTrack(w http.ResponseWriter, r *http.Request) {
 				for id, file := range dbWh {
 					if id == idWanted {
 						json.NewEncoder(w).Encode(file)
-						delete(whDB, idWant)
+						delete(dbWh, idWanted)
 					}
 				}
 			}
