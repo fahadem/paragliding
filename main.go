@@ -100,9 +100,10 @@ func trackHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	switch r.Method {
-	start := time.Now()
+
 	case "POST":
 		{
+			start := time.Now()
 			http.Header.Add(w.Header(), "content-type", "application/json")
 			if r.Body == nil {
 				http.Error(w, "no JSON body", http.StatusBadRequest)
@@ -264,7 +265,7 @@ var idCountWh int
 var idWh string
 var dbWh map[string]Webhook
 var timestamp []time.Time
-webhookURL:= "https://hooks.slack.com/services/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"
+//webhookURL:= "https://hooks.slack.com/services/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"
 
 func main() {
 	db = igcDB{}
