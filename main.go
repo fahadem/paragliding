@@ -35,7 +35,7 @@ type Ticker struct {
 }
 
 type Webhook struct {
-	Webhook_url string `json:"webhookURL,omitempty"`
+	Webhook_Url string `json:"webhookURL,omitempty"`
 	Min_Trigger_Value int64 `json:"minTriggerValue,omitempty"`
 }
 type File struct {
@@ -70,7 +70,9 @@ func (db igcDB) Get(idWanted string) File {
 
 func getApi(w http.ResponseWriter, r *http.Request) {
 	http.Header.Add(w.Header(), "content-type", "application/json")
-
+	if parts[2] == "" {
+		parts[2] = "api"
+	}
 	api := Api{Uptime: time.Now(),
     		 Info: "Service for IGC tracks.",
     		 Version: "v1",
@@ -176,17 +178,20 @@ func getApiTicker(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(ticker)
 }
 
-func handleWebhook(w http.ResponseWriter, r *http.Request) {
-	webhookData := make(map[string]interface{})
-	err := json.NewDecoder(r.Body).Decode(&webhookData)
+func webhookNewTrack(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "501 - Method not implemented", http.StatusNotImplemented)
+		return
+	}
+	http.Header.Add(w.Header(), "content-type", "application/json")
+	webhook := Webhook {}
+	
+	err := json.NewDecoder(r.Body).Decode(&webhook)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Println("got webhook payload: ")
-	for k, v := range webhookData {
-		fmt.Printf("%s : %v\n", k, v)
-	}
+	
 }
 var db igcDB
 var ids []string 
@@ -199,9 +204,11 @@ func main() {
 	idCount = 0
 	ids = nil
 	port := os.Getenv("PORT")
-	http.HandleFunc("/paragliding/api/", getApi)
+	http.HandleFunc("/paragliding/", getApi)
+	http.HandleFunc("/paragliding/api", getApi)
 	http.HandleFunc("/paragliding/api/track/", trackHandler)
 	http.HandleFunc("/paragliding/api/ticker/latest", latestTicker)
 	http.HandleFunc("/paragliding/api/ticker/", getApiTicker)
+	http.HandleFunc("/paragliding/api/webhook/new_track/", webhookNewTrack)
 	http.ListenAndServe(":"+port, nil)
 }
